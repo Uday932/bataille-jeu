@@ -9,7 +9,6 @@ const generateRandomCard = () => {
 };
 
 const playTurn = (playerCards, computerCards, battleStack = []) => {
-
   if (playerCards === 0 || computerCards === 0) {
     return {
       playerCard: null,

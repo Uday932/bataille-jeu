@@ -34,7 +34,6 @@ const App = () => {
     setComputerCards(turnResult.newComputerCards);
     setResult(turnResult.result);
 
-    // Vérifie à nouveau la fin après la mise à jour
     if (turnResult.newPlayerCards === 0 || turnResult.newComputerCards === 0) {
       setGameOver(true);
       setResult(
