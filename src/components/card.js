@@ -1,10 +1,11 @@
-class Card {
-  static colours = [
-    '♥️',
-    '♦️',
-    '♣️',
-    '♠️'
-  ]
-}
+import React from 'react';
 
-export default Card
+const Card = ({ UnType, UneForme }) => {
+  return (
+    <div className="card">
+      <p>{UnType} de {UneForme}</p>
+    </div>
+  );
+};
+
+export default Card;
