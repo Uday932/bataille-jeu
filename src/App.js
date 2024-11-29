@@ -1,46 +1,53 @@
 import React, { useState } from 'react';
 import Card from './components/card';
+import { playTurn } from './components/gameLogique';
 import './App.css';
 
 const App = () => {
   const [playerCard, setPlayerCard] = useState(null);
   const [computerCard, setComputerCard] = useState(null);
+  const [playerCards, setPlayerCards] = useState(26);
+  const [computerCards, setComputerCards] = useState(26);
   const [result, setResult] = useState('');
+  const [gameOver, setGameOver] = useState(false); 
 
-  const types = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Valet', 'Dame', 'Roi', 'As'];
-  const formes = ['♥️', '♦️', '♣️', '♠️'];
+  const handlePlayTurn = () => {
 
-  const drawCard = () => {
-    const playerRandomCard = {
-      UnType: types[Math.floor(Math.random() * types.length)],  
-      UneForme: formes[Math.floor(Math.random() * formes.length)],  
-    };
-    const computerRandomCard = {
-      UnType: types[Math.floor(Math.random() * types.length)],
-      UneForme: formes[Math.floor(Math.random() * formes.length)],
-    };
+    if (gameOver) return;
 
-    setPlayerCard(playerRandomCard);
-    setComputerCard(computerRandomCard);
-    WinnerOfGame(playerRandomCard, computerRandomCard);
-  };
+    if (playerCards === 0 || computerCards === 0) {
+      setGameOver(true);
+      setResult(
+        playerCards === 0
+          ? 'La partie est terminée ! Vous avez perdu.'
+          : 'La partie est terminée ! Vous avez gagné.'
+      );
+      return;
+    }
 
-  const WinnerOfGame = (player, computer) => {
-    const playerRankIndex = types.indexOf(player.UnType);  
-    const computerRankIndex = types.indexOf(computer.UnType); 
 
-    if (playerRankIndex > computerRankIndex) {
-      setResult('Vous avez gagné !');
-    } else if (playerRankIndex < computerRankIndex) {
-      setResult('L\'ordinateur a gagné !');
-    } else {
-      setResult('C\'est une égalité !');
+    const turnResult = playTurn(playerCards, computerCards);
+
+    setPlayerCard(turnResult.playerCard);
+    setComputerCard(turnResult.computerCard);
+    setPlayerCards(turnResult.newPlayerCards);
+    setComputerCards(turnResult.newComputerCards);
+    setResult(turnResult.result);
+
+    // Vérifie à nouveau la fin après la mise à jour
+    if (turnResult.newPlayerCards === 0 || turnResult.newComputerCards === 0) {
+      setGameOver(true);
+      setResult(
+        turnResult.newPlayerCards === 0
+          ? 'La partie est terminée ! Vous avez perdu.'
+          : 'La partie est terminée ! Vous avez gagné.'
+      );
     }
   };
 
   return (
     <div className="app">
-      <h1>Bataille</h1>
+      <h1>Jeu de Bataille</h1>
       <div className="game-container">
         <div className="player-area">
           <h2>Votre carte</h2>
@@ -51,7 +58,13 @@ const App = () => {
           {computerCard && <Card UnType={computerCard.UnType} UneForme={computerCard.UneForme} />}
         </div>
       </div>
-      <button onClick={drawCard}>Tirer une carte</button>
+      <button onClick={handlePlayTurn} disabled={gameOver}>
+        Jouer un tour
+      </button>
+      <div className="remaining-cards">
+        <p>Vos cartes restantes : {playerCards}</p>
+        <p>Cartes restantes de l'ordinateur : {computerCards}</p>
+      </div>
       {result && <h2>{result}</h2>}
     </div>
   );
